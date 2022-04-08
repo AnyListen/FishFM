@@ -122,6 +122,10 @@ public class SongResult
 
     public DbSong ToDbSong(string fmType, string date)
     {
+        if (string.IsNullOrEmpty(Type))
+        {
+            Type = PicUrl.Contains("/wy_") ? "wy" : "qq";
+        }
         return new DbSong
         {
             Id = Type + "#" + Id,

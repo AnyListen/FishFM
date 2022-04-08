@@ -66,7 +66,7 @@
                    TextAlignment="Center" Padding="0 6" />
         <ProgressBar Minimum="0.0" Maximum="10000.0" 
                      Value="{Binding ProcessWidth}" Margin="20 8"></ProgressBar>
-        <Grid Margin="6 0 ">
+        <Grid Margin="8 0 ">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -79,7 +79,13 @@
                     x:Name="BtnControl"
                     VerticalAlignment="Center" Orientation="Horizontal">
             <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="22"
+                       IsVisible="{Binding !Liked}"
+                       Tapped="LikeSong"
                        Padding="26" Cursor="Hand" Text="&#xee0f;"></TextBlock>
+            <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="22"
+                       IsVisible="{Binding Liked}" Foreground="#0078D7"
+                       Tapped="DislikeSong"
+                       Padding="26" Cursor="Hand" Text="&#xee0e;"></TextBlock>
             <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="22"
                        Tapped="PrevSong"
                        Padding="26" Cursor="Hand" Text="&#xf13f;"></TextBlock>
@@ -96,9 +102,9 @@
                        Tapped="ShareSong"
                        Padding="28" Cursor="Hand" Text="&#xf0f3;"></TextBlock>
         </StackPanel>
-        <TextBlock Foreground="#999" TextAlignment="Center" HorizontalAlignment="Center"
+        <TextBlock Foreground="DodgerBlue" TextAlignment="Center" HorizontalAlignment="Center"
                    Padding="0 2 0 16"
-            Text="有的鱼是永远都关不住的，因为他们属于天空。"></TextBlock>
+            Text="{Binding TipText}"></TextBlock>
     </StackPanel>
 
 </Window>

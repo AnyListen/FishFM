@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media.Imaging;
+using FishFM.Helper;
 using FishFM.Models;
 using Newtonsoft.Json;
 using ReactiveUI;
@@ -19,7 +20,6 @@ namespace FishFM.ViewModels
         private DOWNLOADPROC? _downloadProc;
         private BASSTimer? _updateTimer;
         private int _currentStream;
-
 
         #region Params
         
@@ -46,7 +46,16 @@ namespace FishFM.ViewModels
         public SongResult? CurrentSong
         {
             get => _currentSong;
-            private set => this.RaiseAndSetIfChanged(ref _currentSong, value); 
+            private set
+            {
+                this.RaiseAndSetIfChanged(ref _currentSong, value);
+                UpdateLiked();
+            }
+        }
+
+        private void UpdateLiked()
+        {
+            Liked = DbHelper.IsSongLiked(CurrentSong);
         }
 
         private double _currentPosition;
@@ -87,6 +96,22 @@ namespace FishFM.ViewModels
             get => _tabIndex;
             set => this.RaiseAndSetIfChanged(ref _tabIndex, value);
         }
+
+        private const string DefaultTip = "有的鱼是永远都关不住的，因为他们属于天空。";
+        private string _tipText = DefaultTip;
+        public string TipText
+        {
+            get => _tipText;
+            set => this.RaiseAndSetIfChanged(ref _tipText, value);
+        }
+
+        private bool _liked;
+        public bool Liked
+        {
+            get => _liked;
+            set => this.RaiseAndSetIfChanged(ref _liked, value);
+        }
+        
         
         public MainWindowViewModel()
         {
@@ -111,21 +136,29 @@ namespace FishFM.ViewModels
 
         private void InitSongs()
         {
-            var url = "https://ifish.fun/api/music/daily?t=all";
-            using var client = new HttpClient();
-            var resp = client.GetAsync(url).Result;
-            if (!resp.IsSuccessStatusCode) return;
-            var html = resp.Content.ReadAsStringAsync().Result;
-            if (String.IsNullOrEmpty(html))
+            var date = new DateTime().ToString("yyyy-MM-dd");
+            var type = "daily";
+            var songs = DbHelper.GetSongs(date, type);
+            if (songs.Count <= 0)
             {
-                return;
+                var url = "https://ifish.fun/api/music/daily?t=all";
+                using var client = new HttpClient();
+                var resp = client.GetAsync(url).Result;
+                if (!resp.IsSuccessStatusCode) return;
+                var html = resp.Content.ReadAsStringAsync().Result;
+                if (String.IsNullOrEmpty(html))
+                {
+                    return;
+                }
+                var list = JsonConvert.DeserializeObject<List<SongResult>>(html);
+                if (list == null)
+                {
+                    return;
+                }
+                songs = list;
+                DbHelper.UpsertSongs(list, date, type);
             }
-            var list = JsonConvert.DeserializeObject<List<SongResult>>(html);
-            if (list == null)
-            {
-                return;
-            }
-            _songList = list;
+            _songList = songs;
             PlayRandom();
         }
 
@@ -317,29 +350,53 @@ namespace FishFM.ViewModels
             Bass.BASS_Free();
         }
 
-        public bool LikeSong()
+        public void LikeSong()
         {
-            return true;
+            if (Liked || CurrentSong == null)
+            {
+                return;
+            }
+            DbHelper.LikeSong(CurrentSong);
+            UpdateLiked();
         }
 
-        public bool DislikeSong()
+        public void DislikeSong()
         {
-            return true;
+            if (!Liked || CurrentSong == null)
+            {
+                return;
+            }
+            DbHelper.DislikeSong(CurrentSong);
+            UpdateLiked();
         }
 
-        public bool ShareSong()
+        public void ShareSong()
         {
             if (CurrentSong == null)
             {
-                return false;
+                return;
             }
-
             var text = CurrentSong.Name + " - " + CurrentSong.ArtistInfo[0].Name 
                        + " <" + CurrentSong.AlbumInfo.Name + ">";
             var task = Application.Current.Clipboard.SetTextAsync(text);
-            task.Start();
+            if (task.Status == TaskStatus.Created)
+            {
+                task.Start();
+            }
             task.Wait();
-            return true;
+            if (task.IsCompleted || task.IsCompletedSuccessfully)
+            {
+                SetTipText("歌曲信息已复制！");
+            }
+        }
+
+        private void SetTipText(string tip)
+        {
+            TipText = tip;
+            Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith((_ =>
+            {
+                TipText = DefaultTip;
+            }));
         }
     }
 }

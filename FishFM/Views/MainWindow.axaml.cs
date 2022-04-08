@@ -62,12 +62,17 @@ namespace FishFM.Views
 
         private void ShareSong(object? sender, RoutedEventArgs e)
         {
-            var b = true;
-            b = _dataContext != null && _dataContext.ShareSong();
-            if (b)
-            {
-                
-            }
+            _dataContext?.ShareSong();
+        }
+
+        private void LikeSong(object? sender, RoutedEventArgs e)
+        {
+            _dataContext?.LikeSong();
+        }
+
+        private void DislikeSong(object? sender, RoutedEventArgs e)
+        {
+            _dataContext?.DislikeSong();
         }
     }
 }

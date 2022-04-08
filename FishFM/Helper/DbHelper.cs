@@ -39,24 +39,35 @@ public class DbHelper
         return results;
     }
 
-    public static bool LikeSong(SongResult songResult)
+    public static void LikeSong(SongResult songResult)
     {
         using var db = new LiteDatabase("./MyFM.db");
-        var col = db.GetCollection<string>(LikeTable);
-        return col.Upsert(songResult.ToDbSong("","").Id);
+        var col = db.GetCollection<LikedSong>(LikeTable);
+        col.Upsert(new LikedSong(){Id = songResult.ToDbSong("","").Id});
     }
     
-    public static bool DislikeSong(SongResult songResult)
+    public static void DislikeSong(SongResult songResult)
     {
         using var db = new LiteDatabase("./MyFM.db");
-        var col = db.GetCollection<string>(LikeTable);
-        return col.Delete(songResult.ToDbSong("","").Id);
+        var col = db.GetCollection<LikedSong>(LikeTable);
+        col.Delete(songResult.ToDbSong("","").Id);
     }
     
-    public static List<string> GetAllLikedSong(SongResult songResult)
+    public static bool IsSongLiked(SongResult? songResult)
+    {
+        if (songResult == null || string.IsNullOrEmpty(songResult.Id))
+        {
+            return false;
+        }
+        using var db = new LiteDatabase("./MyFM.db");
+        var col = db.GetCollection<LikedSong>(LikeTable);
+        return col.Exists(x=>x.Id == songResult.ToDbSong("","").Id);
+    }
+    
+    public static List<string> GetAllLikedSong()
     {
         using var db = new LiteDatabase("./MyFM.db");
-        var col = db.GetCollection<string>(LikeTable);
-        return col.Query().ToList();
+        var col = db.GetCollection<LikedSong>(LikeTable);
+        return col.Query().Select(x =>x.Id).ToList();
     }
 }
