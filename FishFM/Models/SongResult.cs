@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace Alasa.Models;
+namespace FishFM.Models;
 
 public class SongResult
 {
@@ -118,4 +119,16 @@ public class SongResult
     * 类型
     **/
     public string Type{ get; set; }
+
+    public DbSong ToDbSong(string fmType, string date)
+    {
+        return new DbSong
+        {
+            Id = Type + "#" + Id,
+            FmType = fmType,
+            AddDate = date,
+            LocalPath = "",
+            Text = JsonConvert.SerializeObject(this, Formatting.None)
+        };
+    }
 }

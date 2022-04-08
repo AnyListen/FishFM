@@ -1,4 +1,4 @@
-namespace Alasa.Models;
+namespace FishFM.Models;
 
 public class ArtistInfo
 {

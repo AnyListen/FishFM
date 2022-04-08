@@ -1,10 +1,10 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Alasa.ViewModels;
-using Alasa.Views;
+using FishFM.ViewModels;
+using FishFM.Views;
 
-namespace Alasa
+namespace FishFM
 {
     public class App : Application
     {

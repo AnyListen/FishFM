@@ -4,7 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 
-namespace Alasa.Views
+namespace FishFM.Views
 {
     public partial class CaptureWindow : Window
     {

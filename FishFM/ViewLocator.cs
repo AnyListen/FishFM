@@ -1,9 +1,9 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Alasa.ViewModels;
+using FishFM.ViewModels;
 
-namespace Alasa
+namespace FishFM
 {
     public class ViewLocator : IDataTemplate
     {

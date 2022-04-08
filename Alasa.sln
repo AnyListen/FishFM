@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alasa", "Alasa\Alasa.csproj", "{2BA01A00-9355-4F0D-BDE5-DD928368F40E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishFM", "FishFM\FishFM.csproj", "{2BA01A00-9355-4F0D-BDE5-DD928368F40E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

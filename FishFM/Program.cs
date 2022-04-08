@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
 
-namespace Alasa
+namespace FishFM
 {
     class Program
     {

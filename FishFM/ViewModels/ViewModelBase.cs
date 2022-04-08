@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 
-namespace Alasa.ViewModels
+namespace FishFM.ViewModels
 {
     public class ViewModelBase : ReactiveObject
     {

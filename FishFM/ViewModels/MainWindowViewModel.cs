@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Alasa.Models;
-using Alasa.Views;
-using Avalonia.Media;
+using Avalonia;
 using Avalonia.Media.Imaging;
-using ImageMagick;
+using FishFM.Models;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Un4seen.Bass;
 
-namespace Alasa.ViewModels
+namespace FishFM.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
@@ -21,8 +19,10 @@ namespace Alasa.ViewModels
         private DOWNLOADPROC? _downloadProc;
         private BASSTimer? _updateTimer;
         private int _currentStream;
-        
 
+
+        #region Params
+        
         private IBitmap? _albumPic;
 
         public IBitmap? AlbumPic
@@ -39,13 +39,7 @@ namespace Alasa.ViewModels
             set => this.RaiseAndSetIfChanged(ref _playing, value); 
         }
         
-        private ObservableCollection<SongResult>? _songList;
-
-        private ObservableCollection<SongResult>? SongList 
-        { 
-            get => _songList;
-            set => this.RaiseAndSetIfChanged(ref _songList, value); 
-        }
+        private List<SongResult>? _songList;
 
         private SongResult? _currentSong;
 
@@ -53,11 +47,6 @@ namespace Alasa.ViewModels
         {
             get => _currentSong;
             private set => this.RaiseAndSetIfChanged(ref _currentSong, value); 
-        }
-        
-        public MainWindowViewModel()
-        {
-            InitBassAndSongs();
         }
 
         private double _currentPosition;
@@ -90,17 +79,25 @@ namespace Alasa.ViewModels
             get => _processWidth;
             set => this.RaiseAndSetIfChanged(ref _processWidth, value);
         }
+
+        private int _tabIndex;
+
+        public int TabIndex
+        {
+            get => _tabIndex;
+            set => this.RaiseAndSetIfChanged(ref _tabIndex, value);
+        }
+        
+        public MainWindowViewModel()
+        {
+            InitBassAndSongs();
+        }
+        
+        #endregion
         
         public void ShowCapture()
         {
-            var image = new MagickImage();
-            image.Read("SCREENSHOT", MagickFormat.Screenshot);
-            image.Format = MagickFormat.Bmp;
-            var window = new CaptureWindow();
-            var ms = new MemoryStream();
-            image.Write(ms);
-            window.Background = new ImageBrush(new Bitmap(ms));
-            window.Show();
+            
         }
 
         private void InitBassAndSongs()
@@ -114,7 +111,7 @@ namespace Alasa.ViewModels
 
         private void InitSongs()
         {
-            var url = "https://ifish.fun/api/music/daily?t=xm";
+            var url = "https://ifish.fun/api/music/daily?t=all";
             using var client = new HttpClient();
             var resp = client.GetAsync(url).Result;
             if (!resp.IsSuccessStatusCode) return;
@@ -123,23 +120,23 @@ namespace Alasa.ViewModels
             {
                 return;
             }
-            var list = JsonConvert.DeserializeObject<ObservableCollection<SongResult>>(html);
+            var list = JsonConvert.DeserializeObject<List<SongResult>>(html);
             if (list == null)
             {
                 return;
             }
-            SongList = list;
+            _songList = list;
             PlayRandom();
         }
 
         private void PlayRandom()
         {
-            if (SongList == null)
+            if (_songList == null)
             {
                 return;
             }
-            var index = _random.Next(0, SongList.Count);
-            CurrentSong = SongList[index];
+            var index = _random.Next(0, _songList.Count);
+            CurrentSong = _songList[index];
             PlaySong(CurrentSong);
         }
 
@@ -152,7 +149,7 @@ namespace Alasa.ViewModels
             }
             Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_TIMEOUT, 15000);
             Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_READTIMEOUT, 15000);
-            _updateTimer = new BASSTimer(200);
+            _updateTimer = new BASSTimer(250);
             _updateTimer.Tick += UpdateTimerOnTick;
             _downloadProc = CachePlayingSong;
         }
@@ -170,7 +167,7 @@ namespace Alasa.ViewModels
                     Playing = false;
                     if ((int)ProcessWidth >= 9960)
                     {
-                        PlayRandom();
+                        PlayNext();
                     }
                     break;
                 case BASSActive.BASS_ACTIVE_STALLED:
@@ -198,6 +195,8 @@ namespace Alasa.ViewModels
             {
                 return;
             }
+            ProcessWidth = 0;
+            CurrentPosition = 0;
             try
             {
                 if (_playTask != null && _cancellationToken != null)
@@ -215,7 +214,9 @@ namespace Alasa.ViewModels
             _cancellationToken = new CancellationTokenSource();
             if (_currentStream != 0)
             {
+                Bass.BASS_ChannelStop(_currentStream);
                 Bass.BASS_StreamFree(_currentStream);
+                _currentStream = 0;
             }
             _playTask = Task.Factory.StartNew(() =>
             {
@@ -239,11 +240,11 @@ namespace Alasa.ViewModels
                 }
                 if (path.ToLower().Contains("http"))
                 {
-                    _currentStream = Bass.BASS_StreamCreateURL(path, 0, BASSFlag.BASS_DEFAULT, _downloadProc, IntPtr.Zero);
+                    _currentStream = Bass.BASS_StreamCreateURL(path, 0, BASSFlag.BASS_DEFAULT | BASSFlag.BASS_STREAM_AUTOFREE | BASSFlag.BASS_MUSIC_AUTOFREE, _downloadProc, IntPtr.Zero);
                 }
                 else
                 {
-                    _currentStream = Bass.BASS_StreamCreateFile(path, 0, 0, BASSFlag.BASS_DEFAULT);
+                    _currentStream = Bass.BASS_StreamCreateFile(path, 0, 0, BASSFlag.BASS_DEFAULT | BASSFlag.BASS_STREAM_AUTOFREE | BASSFlag.BASS_MUSIC_AUTOFREE);
                 }
                 if (Bass.BASS_ChannelIsActive(_currentStream) != BASSActive.BASS_ACTIVE_PLAYING)
                 {
@@ -307,8 +308,38 @@ namespace Alasa.ViewModels
                 _updateTimer.Stop();
                 _updateTimer.Dispose();
             }
+            if (_currentStream != 0)
+            {
+                Bass.BASS_ChannelStop(_currentStream);
+                Bass.BASS_StreamFree(_currentStream);
+            }
             Bass.BASS_Stop();
             Bass.BASS_Free();
+        }
+
+        public bool LikeSong()
+        {
+            return true;
+        }
+
+        public bool DislikeSong()
+        {
+            return true;
+        }
+
+        public bool ShareSong()
+        {
+            if (CurrentSong == null)
+            {
+                return false;
+            }
+
+            var text = CurrentSong.Name + " - " + CurrentSong.ArtistInfo[0].Name 
+                       + " <" + CurrentSong.AlbumInfo.Name + ">";
+            var task = Application.Current.Clipboard.SetTextAsync(text);
+            task.Start();
+            task.Wait();
+            return true;
         }
     }
 }

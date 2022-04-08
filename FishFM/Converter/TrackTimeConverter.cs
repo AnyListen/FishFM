@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace Alasa.Converter;
+namespace FishFM.Converter;
 
 public class TrackTimeConverter : IValueConverter
 {

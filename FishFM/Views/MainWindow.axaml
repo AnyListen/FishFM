@@ -1,18 +1,18 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Alasa.ViewModels"
+        xmlns:vm="using:FishFM.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:converter="clr-namespace:Alasa.Converter"
-        mc:Ignorable="d" d:DesignWidth="460" d:DesignHeight="640"
-        x:Class="Alasa.Views.MainWindow"
+        xmlns:converter="clr-namespace:FishFM.Converter"
+        mc:Ignorable="d" d:DesignWidth="520" d:DesignHeight="570"
+        x:Class="FishFM.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Closing="Window_OnClosing"
         Opened="TopLevel_OnOpened"
         Background="#FAFFF8"
-        Width="420"
-        Height="620"
-        Title="Alasa">
+        MinWidth="520" Width="520" WindowStartupLocation="CenterScreen"
+        MaxWidth="520" Height="628" MaxHeight="628" MinHeight="628"
+        Title="鱼声FM">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -20,7 +20,7 @@
     
     <Window.Resources>
         <converter:TrackTimeConverter x:Key="TimeConverter"/>
-        <FontFamily x:Key="RemixIconFont">avares://Alasa/Assets/#remixicon</FontFamily>
+        <FontFamily x:Key="RemixIconFont">avares://FishFM/Assets/#remixicon</FontFamily>
     </Window.Resources>
     
     <Window.Styles>
@@ -32,7 +32,15 @@
         </Style>
     </Window.Styles>
     
-    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+    <StackPanel Name="MainPanel" Orientation="Vertical" VerticalAlignment="Top">
+        <TabControl TabStripPlacement="Bottom" Width="{Binding ElementName=MainPanel,Path=Width}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 8 0 6"
+                    SelectedIndex="{Binding TabIndex}">
+            <TabItem Header="日推" Margin="6 0"></TabItem>
+            <TabItem Header="精选" Margin="6 0"></TabItem>
+            <TabItem Header="私人" Margin="6 0"></TabItem>
+        </TabControl>
+        
         <Menu IsVisible="False">
             <MenuItem Header="_File">
                 <MenuItem x:Name="SaveMenuItem" Header="_Save" 
@@ -42,7 +50,7 @@
         </Menu>
        <Border CornerRadius="32" Width="260" Height="260" 
                BorderThickness="2" BorderBrush="#F3F6F9"
-               Margin="0 38 0 16 ">
+               Margin="0 12 0 14">
             <Border.Background>
                 <ImageBrush Source="{Binding AlbumPic}"></ImageBrush>
             </Border.Background>
@@ -85,9 +93,12 @@
                        Tapped="NextSong"
                        Padding="26" Cursor="Hand" Text="&#xf143;"></TextBlock>
             <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="18"
+                       Tapped="ShareSong"
                        Padding="28" Cursor="Hand" Text="&#xf0f3;"></TextBlock>
         </StackPanel>
+        <TextBlock Foreground="#999" TextAlignment="Center" HorizontalAlignment="Center"
+                   Padding="0 2 0 16"
+            Text="有的鱼是永远都关不住的，因为他们属于天空。"></TextBlock>
     </StackPanel>
-    
 
 </Window>

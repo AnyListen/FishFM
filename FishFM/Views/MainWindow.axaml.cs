@@ -1,13 +1,13 @@
 using System;
 using System.ComponentModel;
-using Alasa.ViewModels;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using FishFM.ViewModels;
 using Un4seen.Bass;
 
-namespace Alasa.Views
+namespace FishFM.Views
 {
     public partial class MainWindow : Window
     {
@@ -57,6 +57,16 @@ namespace Alasa.Views
             if (ctx is MainWindowViewModel model)
             {
                 _dataContext = model;
+            }
+        }
+
+        private void ShareSong(object? sender, RoutedEventArgs e)
+        {
+            var b = true;
+            b = _dataContext != null && _dataContext.ShareSong();
+            if (b)
+            {
+                
             }
         }
     }
