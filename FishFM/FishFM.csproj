@@ -7,18 +7,30 @@
         <FileVersion>0.0.1</FileVersion>
         <NeutralLanguage>en-CN</NeutralLanguage>
         <UseAppHost>true</UseAppHost>
+
+        <CFBundleName>FishFM</CFBundleName>
+        <CFBundleDisplayName>FishFM</CFBundleDisplayName>
+        <CFBundleIdentifier>fun.ifish</CFBundleIdentifier>
+        <CFBundleVersion>1.0.0</CFBundleVersion>
+        <CFBundlePackageType>APPL</CFBundlePackageType>
+        <CFBundleSignature>????</CFBundleSignature>
+        <CFBundleExecutable>FishFM</CFBundleExecutable>
+        <CFBundleIconFile>FishFM.icns</CFBundleIconFile>
+        <NSPrincipalClass>NSApplication</NSPrincipalClass>
+        <NSHighResolutionCapable>true</NSHighResolutionCapable>
     </PropertyGroup>
     <ItemGroup>
         <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="0.10.3" />
-        <PackageReference Include="Avalonia.Desktop" Version="0.10.3" />
-        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.3" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.3" />
+        <PackageReference Include="Avalonia" Version="0.10.13" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.13" />
         <PackageReference Include="LiteDB" Version="5.0.11" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
     </ItemGroup>
     <ItemGroup>
       <Compile Update="Views\CaptureWIndow.axaml.cs">
@@ -31,5 +43,16 @@
       <Reference Include="Bass.Net, Version=2.4.14.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480">
         <HintPath>..\..\..\Downloads\Bass24.Net\standard\Bass.Net.dll</HintPath>
       </Reference>
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="libbass.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="bass.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="libbass.so">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>

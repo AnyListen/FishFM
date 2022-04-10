@@ -5,7 +5,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using FishFM.ViewModels;
-using Un4seen.Bass;
 
 namespace FishFM.Views
 {
@@ -53,7 +52,7 @@ namespace FishFM.Views
 
         private void TopLevel_OnOpened(object? sender, EventArgs e)
         {
-            var ctx = this.DataContext;
+            var ctx = DataContext;
             if (ctx is MainWindowViewModel model)
             {
                 _dataContext = model;
@@ -73,6 +72,14 @@ namespace FishFM.Views
         private void DislikeSong(object? sender, RoutedEventArgs e)
         {
             _dataContext?.DislikeSong();
+        }
+
+        private void ChangeTab(object? sender, SelectionChangedEventArgs e)
+        {
+            if (sender is not TabControl tab) return;
+            if (_dataContext == null) return;
+            _dataContext.TabIndex = tab.SelectedIndex;
+            _dataContext.RefreshList();
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FishFM.Models;
 using LiteDB;
@@ -9,6 +10,7 @@ public class DbHelper
 {
     private const string FmSongTable = "t_fm_songs";
     private const string LikeTable = "t_liked_songs";
+    private static Random Rdm = new Random();
 
     public static bool UpsertSongs(List<SongResult> list, string date, string type)
     {
@@ -26,8 +28,59 @@ public class DbHelper
     {
         using var db = new LiteDatabase("./MyFM.db");
         var col = db.GetCollection<DbSong>(FmSongTable);
-        var list = col.Query().Where(s => s.FmType == type && s.AddDate == date).ToList();
-        List<SongResult> results = new List<SongResult>(list.Count);
+        var list = col.Query()
+            .Where(s => s.FmType == type && (string.IsNullOrEmpty(date) || s.AddDate == date)).ToList();
+        var results = new List<SongResult>(list.Count);
+        foreach (var dbSong in list)
+        {
+            var song = JsonConvert.DeserializeObject<SongResult>(dbSong.Text);
+            if (song != null)
+            {
+                results.Add(song);
+            }
+        }
+        return results;
+    }
+    
+    public static SongResult? GetLastSong(string type)
+    {
+        using var db = new LiteDatabase("./MyFM.db");
+        var col = db.GetCollection<DbSong>(FmSongTable);
+        var lastSong = col.Query()
+            .Where(s => s.FmType == type).OrderByDescending(s=>s.AddDate).Limit(1).FirstOrDefault();
+        if (lastSong == null)
+        {
+            return null;
+        }
+        return JsonConvert.DeserializeObject<SongResult>(lastSong.Text);
+    }
+    
+    public static List<SongResult> GetSongsByIds(List<string> ids)
+    {
+        using var db = new LiteDatabase("./MyFM.db");
+        var col = db.GetCollection<DbSong>(FmSongTable);
+        var list = col.Query()
+            .Where(s => ids.Contains(s.Id)).ToList();
+        var results = new List<SongResult>(list.Count);
+        foreach (var dbSong in list)
+        {
+            var song = JsonConvert.DeserializeObject<SongResult>(dbSong.Text);
+            if (song != null)
+            {
+                results.Add(song);
+            }
+        }
+        return results;
+    }
+    
+    public static List<SongResult> GetRandomSongs()
+    {
+        using var db = new LiteDatabase("./MyFM.db");
+        var col = db.GetCollection<DbSong>(FmSongTable);
+        var offset = Rdm.Next(0, col.Count());
+        var list = col.Query()
+            .Limit(1).Offset(offset).ToList();
+        var results = new List<SongResult>(list.Count);
         foreach (var dbSong in list)
         {
             var song = JsonConvert.DeserializeObject<SongResult>(dbSong.Text);

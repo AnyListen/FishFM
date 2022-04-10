@@ -9,9 +9,9 @@
         Icon="/Assets/avalonia-logo.ico"
         Closing="Window_OnClosing"
         Opened="TopLevel_OnOpened"
-        Background="#FAFFF8"
-        MinWidth="520" Width="520" WindowStartupLocation="CenterScreen"
-        MaxWidth="520" Height="628" MaxHeight="628" MinHeight="628"
+        MinWidth="520" Width="520" MaxWidth="920" 
+        Height="628" MaxHeight="660" MinHeight="628"
+        WindowStartupLocation="CenterScreen"
         Title="鱼声FM">
 
     <Design.DataContext>
@@ -35,17 +35,30 @@
     <StackPanel Name="MainPanel" Orientation="Vertical" VerticalAlignment="Top">
         <TabControl TabStripPlacement="Bottom" Width="{Binding ElementName=MainPanel,Path=Width}"
                     HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 8 0 6"
+                    SelectionChanged="ChangeTab"
                     SelectedIndex="{Binding TabIndex}">
             <TabItem Header="日推" Margin="6 0"></TabItem>
-            <TabItem Header="精选" Margin="6 0"></TabItem>
+            <TabItem Header="发现" Margin="6 0"></TabItem>
             <TabItem Header="私人" Margin="6 0"></TabItem>
         </TabControl>
         
         <Menu IsVisible="False">
             <MenuItem Header="_File">
-                <MenuItem x:Name="SaveMenuItem" Header="_Save" 
-                          Command="{Binding ShowCapture}" 
-                          HotKey="Shift+X"/>
+                <MenuItem Header="_Play/Pause_U" 
+                          Command="{Binding PlayPauseMusic}" 
+                          HotKey="Space"/>
+                <MenuItem Header="_Play/Pause_Air"
+                          Command="{Binding PlayPauseMusic}" 
+                          HotKey="MediaPlayPause"/>
+                <MenuItem Header="_Stop"
+                          Command="{Binding Pause}" 
+                          HotKey="MediaStop"/>
+                <MenuItem Header="_Next"
+                          Command="{Binding PlayNext}" 
+                          HotKey="MediaNextTrack"/>
+                <MenuItem Header="_Prev"
+                          Command="{Binding PlayPrev}" 
+                          HotKey="MediaPreviousTrack"/>
             </MenuItem>
         </Menu>
        <Border CornerRadius="32" Width="260" Height="260" 
@@ -57,15 +70,15 @@
         </Border>
         <TextBlock Text="{Binding CurrentSong.Name}" FontWeight="600" 
                    FontSize="16" Padding="0 6" Foreground="#333"
-                   TextAlignment="Center" />
+                   TextAlignment="Center" Height="30" />
         <TextBlock Text="{Binding CurrentSong.ArtistInfo[0].Name}" 
-                   Foreground="#666" FontSize="14"
+                   Foreground="#666" FontSize="14" Height="22"
                    TextAlignment="Center" Padding="0 3" />
         <TextBlock Text="{Binding CurrentSong.AlbumInfo.Name}"
-                   FontSize="12" Foreground="#999"
+                   FontSize="12" Foreground="#999" Height="26"
                    TextAlignment="Center" Padding="0 6" />
         <ProgressBar Minimum="0.0" Maximum="10000.0" 
-                     Value="{Binding ProcessWidth}" Margin="20 8"></ProgressBar>
+                     Value="{Binding ProcessWidth}" Margin="20 10 20 6"></ProgressBar>
         <Grid Margin="8 0 ">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -76,19 +89,19 @@
                        Grid.Column="1" TextAlignment="Right" Foreground="Gray" FontSize="12"></TextBlock>
         </Grid>
         <StackPanel HorizontalAlignment="Center" Margin="10 2"
-                    x:Name="BtnControl"
+                    x:Name="BtnControl" Height="76"
                     VerticalAlignment="Center" Orientation="Horizontal">
             <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="22"
                        IsVisible="{Binding !Liked}"
                        Tapped="LikeSong"
-                       Padding="26" Cursor="Hand" Text="&#xee0f;"></TextBlock>
+                       Padding="22 26" Cursor="Hand" Text="&#xee09;"></TextBlock>
             <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="22"
                        IsVisible="{Binding Liked}" Foreground="#0078D7"
                        Tapped="DislikeSong"
-                       Padding="26" Cursor="Hand" Text="&#xee0e;"></TextBlock>
+                       Padding="22 26" Cursor="Hand" Text="&#xee08;"></TextBlock>
             <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="22"
                        Tapped="PrevSong"
-                       Padding="26" Cursor="Hand" Text="&#xf13f;"></TextBlock>
+                       Padding="22 26" Cursor="Hand" Text="&#xf13f;"></TextBlock>
             <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="48"
                        Tapped="PlaySong" IsVisible="{Binding !Playing}"
                        Padding="13" Cursor="Hand" Text="&#xf00a;"></TextBlock>
@@ -97,14 +110,17 @@
                        Padding="13" Cursor="Hand" Text="&#xefd7;"></TextBlock>
             <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="22"
                        Tapped="NextSong"
-                       Padding="26" Cursor="Hand" Text="&#xf143;"></TextBlock>
-            <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="18"
+                       Padding="22 26" Cursor="Hand" Text="&#xf143;"></TextBlock>
+            <TextBlock FontFamily="{StaticResource RemixIconFont}" FontSize="22"
                        Tapped="ShareSong"
-                       Padding="28" Cursor="Hand" Text="&#xf0f3;"></TextBlock>
+                       Padding="22 26" Cursor="Hand" Text="&#xf0f7;"></TextBlock>
         </StackPanel>
         <TextBlock Foreground="DodgerBlue" TextAlignment="Center" HorizontalAlignment="Center"
-                   Padding="0 2 0 16"
+                   Padding="0 0 0 12" Height="26"
             Text="{Binding TipText}"></TextBlock>
+        <StackPanel>
+            
+        </StackPanel>
     </StackPanel>
 
 </Window>

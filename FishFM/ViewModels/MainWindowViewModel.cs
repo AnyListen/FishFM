@@ -20,6 +20,7 @@ namespace FishFM.ViewModels
         private DOWNLOADPROC? _downloadProc;
         private BASSTimer? _updateTimer;
         private int _currentStream;
+        private bool _isDiscoveryInit;
 
         #region Params
         
@@ -97,7 +98,7 @@ namespace FishFM.ViewModels
             set => this.RaiseAndSetIfChanged(ref _tabIndex, value);
         }
 
-        private const string DefaultTip = "有的鱼是永远都关不住的，因为他们属于天空。";
+        private const string DefaultTip = "有的鱼是永远都关不住的，因为他们属于天空";
         private string _tipText = DefaultTip;
         public string TipText
         {
@@ -120,9 +121,16 @@ namespace FishFM.ViewModels
         
         #endregion
         
-        public void ShowCapture()
+        public void PlayPauseMusic()
         {
-            
+            if (Playing)
+            {
+                Pause();
+            }
+            else
+            {
+                Play();
+            }
         }
 
         private void InitBassAndSongs()
@@ -130,36 +138,8 @@ namespace FishFM.ViewModels
             Task.Factory.StartNew(() =>
             {
                 BassInit();
-                InitSongs();
+                RefreshList();
             });
-        }
-
-        private void InitSongs()
-        {
-            var date = new DateTime().ToString("yyyy-MM-dd");
-            var type = "daily";
-            var songs = DbHelper.GetSongs(date, type);
-            if (songs.Count <= 0)
-            {
-                var url = "https://ifish.fun/api/music/daily?t=all";
-                using var client = new HttpClient();
-                var resp = client.GetAsync(url).Result;
-                if (!resp.IsSuccessStatusCode) return;
-                var html = resp.Content.ReadAsStringAsync().Result;
-                if (String.IsNullOrEmpty(html))
-                {
-                    return;
-                }
-                var list = JsonConvert.DeserializeObject<List<SongResult>>(html);
-                if (list == null)
-                {
-                    return;
-                }
-                songs = list;
-                DbHelper.UpsertSongs(list, date, type);
-            }
-            _songList = songs;
-            PlayRandom();
         }
 
         private void PlayRandom()
@@ -235,7 +215,7 @@ namespace FishFM.ViewModels
                 if (_playTask != null && _cancellationToken != null)
                 {
                     _cancellationToken.Cancel();
-                    _playTask.Wait();
+                    _playTask.Wait(1000);
                     _playTask.Dispose();
                     _cancellationToken.Dispose();
                 }
@@ -283,7 +263,12 @@ namespace FishFM.ViewModels
                 {
                     Bass.BASS_Start();
                 }
-                if (_currentStream != 0 && Bass.BASS_ChannelPlay(_currentStream, true))
+                if (_currentStream == 0)
+                {
+                    PlayNext();
+                    return;
+                }
+                if (Bass.BASS_ChannelPlay(_currentStream, true))
                 {
                     TrackLength = Bass.BASS_ChannelBytes2Seconds(_currentStream,
                         Bass.BASS_ChannelGetLength(_currentStream));
@@ -316,7 +301,14 @@ namespace FishFM.ViewModels
 
         public void PlayNext()
         {
-            PlayRandom();
+            if (TabIndex == 1)
+            {
+                RefreshList();
+            }
+            else
+            {
+                PlayRandom();
+            }
         }
 
         public void PlayPrev()
@@ -397,6 +389,70 @@ namespace FishFM.ViewModels
             {
                 TipText = DefaultTip;
             }));
+        }
+
+        public void RefreshList()
+        {
+            List<SongResult> songs;
+            var type = "daily";
+            var date = DateTime.Now.ToString("yyyy-MM-dd");
+            switch (TabIndex)
+            {
+                case 0:
+                    songs = DbHelper.GetSongs(date, type);
+                    if (songs.Count <= 0)
+                    {
+                        var list = getSongsByType("xm");
+                        if (list == null)
+                        {
+                            return;
+                        }
+                        songs = list;
+                        DbHelper.UpsertSongs(list, date, type);
+                    }
+                    break;
+                case 1:
+                    var lastSong = DbHelper.GetLastSong("init");
+                    if (lastSong == null && !_isDiscoveryInit)
+                    {
+                        _isDiscoveryInit = true;
+                        Task.Factory.StartNew(() =>
+                        {
+                            var list = getSongsByType("init");
+                            if (list == null)
+                            {
+                                return;
+                            }
+                            DbHelper.UpsertSongs(list, date, "init");
+                            _isDiscoveryInit = false;
+                        });
+                    }
+                    songs = DbHelper.GetRandomSongs();
+                    break;
+                case 2:
+                    var ids = DbHelper.GetAllLikedSong();
+                    songs = ids.Count > 0 ? DbHelper.GetSongsByIds(ids) : DbHelper.GetRandomSongs();
+                    break;
+                default:
+                    songs = DbHelper.GetRandomSongs();
+                    break;
+            }
+            _songList = songs;
+            PlayRandom();
+        }
+
+        private List<SongResult>? getSongsByType(string type)
+        {
+            var url = "https://ifish.fun/api/music/daily?t="+type;
+            using var client = new HttpClient();
+            var resp = client.GetAsync(url).Result;
+            if (!resp.IsSuccessStatusCode) return null;
+            var html = resp.Content.ReadAsStringAsync().Result;
+            if (string.IsNullOrEmpty(html))
+            {
+                return null;
+            }
+            return JsonConvert.DeserializeObject<List<SongResult>>(html);
         }
     }
 }
