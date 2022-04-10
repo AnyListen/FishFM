@@ -16,6 +16,7 @@
         <CFBundleSignature>????</CFBundleSignature>
         <CFBundleExecutable>FishFM</CFBundleExecutable>
         <CFBundleIconFile>FishFM.icns</CFBundleIconFile>
+        <CFBundleShortVersionString>1.0</CFBundleShortVersionString>
         <NSPrincipalClass>NSApplication</NSPrincipalClass>
         <NSHighResolutionCapable>true</NSHighResolutionCapable>
     </PropertyGroup>
@@ -52,6 +53,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="libbass.so">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="FishFM.icns">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
