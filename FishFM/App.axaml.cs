@@ -1,6 +1,8 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using FishFM.ViewModels;
 using FishFM.Views;
 

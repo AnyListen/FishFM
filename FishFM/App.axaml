@@ -1,12 +1,16 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:FishFM"
+             xmlns:viewModels="clr-namespace:FishFM.ViewModels"
              x:Class="FishFM.App">
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
+    <Application.DataContext>
+        <viewModels:AppViewModel />
+    </Application.DataContext>
 
     <Application.Styles>
-        <FluentTheme Mode="Light"/>
+        <FluentTheme Mode="{Binding ThemeMode}"/>
     </Application.Styles>
 </Application>

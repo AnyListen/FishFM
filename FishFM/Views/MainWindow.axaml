@@ -10,8 +10,11 @@
         Closing="Window_OnClosing"
         Opened="TopLevel_OnOpened"
         MinWidth="520" Width="520" MaxWidth="920" 
-        Height="628" MaxHeight="660" MinHeight="628"
+        Height="610" MaxHeight="612" MinHeight="610"
         WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="#80D7D8D9"
         Title="鱼声FM">
 
     <Design.DataContext>
@@ -25,16 +28,28 @@
     
     <Window.Styles>
         <Style Selector="StackPanel#BtnControl > TextBlock">
-            <Setter Property="Foreground" Value="Gray"></Setter>
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}"></Setter>
+            <Setter Property="Opacity" Value="0.55"></Setter>
         </Style>
         <Style Selector="StackPanel#BtnControl > TextBlock:pointerover">
             <Setter Property="Foreground" Value="#0078D7"></Setter>
+            <Setter Property="Opacity" Value="0.95"></Setter>
         </Style>
     </Window.Styles>
     
     <StackPanel Name="MainPanel" Orientation="Vertical" VerticalAlignment="Top">
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="SandyBrown"
+                    TintOpacity="0.8"
+                    MaterialOpacity="0.8" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        
         <TabControl TabStripPlacement="Bottom" Width="{Binding ElementName=MainPanel,Path=Width}"
-                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 8 0 6"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 28 0 6"
                     SelectionChanged="ChangeTab"
                     SelectedIndex="{Binding TabIndex}">
             <TabItem Header="日推" Margin="6 0"></TabItem>
@@ -61,22 +76,23 @@
                           HotKey="MediaPreviousTrack"/>
             </MenuItem>
         </Menu>
-       <Border CornerRadius="32" Width="260" Height="260" 
+        
+       <Border CornerRadius="32" Width="260" Height="260" Opacity="0.9"
                BorderThickness="2" BorderBrush="#F3F6F9"
                Margin="0 12 0 14">
             <Border.Background>
                 <ImageBrush Source="{Binding AlbumPic}"></ImageBrush>
             </Border.Background>
         </Border>
-        <TextBlock Text="{Binding CurrentSong.Name}" FontWeight="600" 
-                   FontSize="16" Padding="0 6" Foreground="#333"
-                   TextAlignment="Center" Height="30" />
+        <TextBlock Text="{Binding CurrentSong.Name}"
+                   FontSize="16" Padding="0 6" Foreground="{DynamicResource ThemeForegroundBrush}"
+                   TextAlignment="Center" Height="30" Opacity="0.95" />
         <TextBlock Text="{Binding CurrentSong.ArtistInfo[0].Name}" 
-                   Foreground="#666" FontSize="14" Height="22"
-                   TextAlignment="Center" Padding="0 3" />
+                   Foreground="{DynamicResource ThemeForegroundBrush}" FontSize="14" Height="22"
+                   TextAlignment="Center" Padding="0 3" Opacity="0.85" />
         <TextBlock Text="{Binding CurrentSong.AlbumInfo.Name}"
-                   FontSize="12" Foreground="#999" Height="26"
-                   TextAlignment="Center" Padding="0 6" />
+                   FontSize="12" Foreground="{DynamicResource ThemeForegroundBrush}" Height="26"
+                   TextAlignment="Center" Padding="0 6" Opacity="0.75" />
         <ProgressBar Minimum="0.0" Maximum="10000.0" 
                      Value="{Binding ProcessWidth}" Margin="20 10 20 6"></ProgressBar>
         <Grid Margin="8 0 ">
@@ -84,9 +100,14 @@
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding CurrentPosition, Converter={StaticResource TimeConverter}}"  Grid.Column="0" TextAlignment="Left" Foreground="Gray" FontSize="12"></TextBlock>
-            <TextBlock Text="{Binding TrackLength, Converter={StaticResource TimeConverter}}" 
-                       Grid.Column="1" TextAlignment="Right" Foreground="Gray" FontSize="12"></TextBlock>
+            <TextBlock Text="{Binding CurrentPosition, Converter={StaticResource TimeConverter}}"
+                       Grid.Column="0" TextAlignment="Left" Opacity="0.65"
+                       Foreground="{DynamicResource ThemeForegroundBrush}" 
+                       FontSize="12"></TextBlock>
+            <TextBlock Text="{Binding TrackLength, Converter={StaticResource TimeConverter}}"
+                       Grid.Column="1" TextAlignment="Right" Opacity="0.65"
+                       Foreground="{DynamicResource ThemeForegroundBrush}" 
+                       FontSize="12"></TextBlock>
         </Grid>
         <StackPanel HorizontalAlignment="Center" Margin="10 2"
                     x:Name="BtnControl" Height="76"
@@ -115,12 +136,9 @@
                        Tapped="ShareSong"
                        Padding="22 26" Cursor="Hand" Text="&#xf0f7;"></TextBlock>
         </StackPanel>
-        <TextBlock Foreground="DodgerBlue" TextAlignment="Center" HorizontalAlignment="Center"
-                   Padding="0 0 0 12" Height="26"
+        <TextBlock Foreground="{DynamicResource ThemeAccentBrush2}" TextAlignment="Center" HorizontalAlignment="Center"
+                   Padding="0 0 0 12" Height="26" Opacity="0.7"
             Text="{Binding TipText}"></TextBlock>
-        <StackPanel>
-            
-        </StackPanel>
     </StackPanel>
 
 </Window>

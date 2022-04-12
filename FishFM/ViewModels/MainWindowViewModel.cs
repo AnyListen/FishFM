@@ -19,6 +19,7 @@ namespace FishFM.ViewModels
         private readonly Random _random = new();
         private DOWNLOADPROC? _downloadProc;
         private BASSTimer? _updateTimer;
+        private int _playCount;
         private int _currentStream;
         private bool _isDiscoveryInit;
 
@@ -309,6 +310,7 @@ namespace FishFM.ViewModels
             {
                 PlayRandom();
             }
+            _playCount++;
         }
 
         public void PlayPrev()
@@ -385,7 +387,7 @@ namespace FishFM.ViewModels
         private void SetTipText(string tip)
         {
             TipText = tip;
-            Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith((_ =>
+            Task.Delay(TimeSpan.FromSeconds(2)).ContinueWith((_ =>
             {
                 TipText = DefaultTip;
             }));
@@ -393,6 +395,7 @@ namespace FishFM.ViewModels
 
         public void RefreshList()
         {
+            SetTipText("列表更新中，请稍等...");
             List<SongResult> songs;
             var type = "daily";
             var date = DateTime.Now.ToString("yyyy-MM-dd");
@@ -409,6 +412,21 @@ namespace FishFM.ViewModels
                         }
                         songs = list;
                         DbHelper.UpsertSongs(list, date, type);
+                    }
+                    if (_playCount % 10 == 0)
+                    {
+                        _isDiscoveryInit = true;
+                        Task.Factory.StartNew(() =>
+                        {
+                            var list = getSongsByType("xm");
+                            if (list == null)
+                            {
+                                return;
+                            }
+                            songs = list;
+                            DbHelper.UpsertSongs(list, date, type);
+                            _isDiscoveryInit = false;
+                        });
                     }
                     break;
                 case 1:
@@ -448,11 +466,7 @@ namespace FishFM.ViewModels
             var resp = client.GetAsync(url).Result;
             if (!resp.IsSuccessStatusCode) return null;
             var html = resp.Content.ReadAsStringAsync().Result;
-            if (string.IsNullOrEmpty(html))
-            {
-                return null;
-            }
-            return JsonConvert.DeserializeObject<List<SongResult>>(html);
+            return string.IsNullOrEmpty(html) ? null : JsonConvert.DeserializeObject<List<SongResult>>(html);
         }
     }
 }
