@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1700.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishFM", "FishFM.csproj", "{6221C981-94F6-4BDA-A5A0-7AD555F787CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6221C981-94F6-4BDA-A5A0-7AD555F787CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6221C981-94F6-4BDA-A5A0-7AD555F787CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6221C981-94F6-4BDA-A5A0-7AD555F787CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6221C981-94F6-4BDA-A5A0-7AD555F787CF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {20BB610C-5608-4C84-94EF-097FE2C57DBA}
+	EndGlobalSection
+EndGlobal
