@@ -7,6 +7,7 @@
         <FileVersion>0.0.1</FileVersion>
         <NeutralLanguage>en-CN</NeutralLanguage>
         <UseAppHost>true</UseAppHost>
+        <ApplicationIcon>Assets/avalonia-logo.ico</ApplicationIcon>
 
         <CFBundleName>FishFM</CFBundleName>
         <CFBundleDisplayName>FishFM</CFBundleDisplayName>
@@ -19,6 +20,15 @@
         <CFBundleShortVersionString>1.0</CFBundleShortVersionString>
         <NSPrincipalClass>NSApplication</NSPrincipalClass>
         <NSHighResolutionCapable>true</NSHighResolutionCapable>
+        <CodePage>65001</CodePage>
+        <LangVersion>10</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+      <WarningLevel>4</WarningLevel>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <ItemGroup>
         <Folder Include="Models\" />
@@ -59,4 +69,5 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
+    
 </Project>

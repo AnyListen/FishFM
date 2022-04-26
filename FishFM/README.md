@@ -12,5 +12,18 @@ A Cross Platform Music Discovery FM
 
 ![Demo](https://img.ifish.fun/WX20220412-212126%402x.png)
 
-### 反馈群
-![ERWEIMA](https://img.ifish.fun/WechatIMG505.jpeg)
+## 自助编译
+### macos
+运行以下命令，然后在`项目目录/bin/Release/publish`下可以找到 `FishFM.app`
+```shell
+~/.dotnet/dotnet restore -r osx-x64
+~/.dotnet/dotnet msbuild -t:BundleApp -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release -p:UseAppHost=true
+```
+
+### win-x86
+运行以下命令，然后在`项目目录/bin/Release/publish`下可以找到 `FishFM.app`
+```shell
+~/.dotnet/dotnet restore -r win-x86
+~/.dotnet/dotnet publish -r win-x86 -c Release --self-contained true -property:Configuration=Release -p:UseAppHost=true -p:DebugSymbols=false 
+```
+
