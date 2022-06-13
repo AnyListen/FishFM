@@ -423,7 +423,6 @@ namespace FishFM.ViewModels
                             {
                                 return;
                             }
-                            songs = list;
                             DbHelper.UpsertSongs(list, date, type);
                             _isDiscoveryInit = false;
                         });

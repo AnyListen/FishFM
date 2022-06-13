@@ -1,8 +1,10 @@
-namespace FishFM.Models;
-
-public class ArtistInfo
+namespace FishFM.Models
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string SubName { get; set; }
+    public class ArtistInfo
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string SubName { get; set; }
+    }
 }
+

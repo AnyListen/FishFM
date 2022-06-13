@@ -1,10 +1,12 @@
-namespace FishFM.Models;
-
-public class AlbumInfo
+namespace FishFM.Models
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string SubName { get; set; }
-    public string ArtistId { get; set; }
-    public string ArtistName { get; set; }
+    public class AlbumInfo
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string SubName { get; set; }
+        public string ArtistId { get; set; }
+        public string ArtistName { get; set; }
+    }
 }
+

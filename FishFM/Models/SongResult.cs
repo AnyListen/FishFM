@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace FishFM.Models;
-
+namespace FishFM.Models
+{
+    
 public class SongResult
 {
     /**
@@ -135,4 +136,5 @@ public class SongResult
             Text = JsonConvert.SerializeObject(this, Formatting.None)
         };
     }
+}
 }

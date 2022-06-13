@@ -1,16 +1,18 @@
 using Avalonia.Themes.Fluent;
 using ReactiveUI;
 
-namespace FishFM.ViewModels;
-
-public class AppViewModel : ViewModelBase
+namespace FishFM.ViewModels
 {
-    private FluentThemeMode _themeMode = FluentThemeMode.Light;
-
-    public FluentThemeMode ThemeMode
+    
+    public class AppViewModel : ViewModelBase
     {
-        get => _themeMode;
-        set => this.RaiseAndSetIfChanged(ref _themeMode, value); 
-    }
+        private FluentThemeMode _themeMode = FluentThemeMode.Light;
 
+        public FluentThemeMode ThemeMode
+        {
+            get => _themeMode;
+            set => this.RaiseAndSetIfChanged(ref _themeMode, value); 
+        }
+
+    }
 }
